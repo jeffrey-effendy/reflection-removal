@@ -57,7 +57,7 @@ def doAveraging(image_filenames):
 
     # Show the image
     if is_show_image_popup:
-        cv.imshow("averaged", output)
+        cv.imshow("averaged", averagedImage)
         cv.waitKey(0)
         cv.destroyAllWindows()
         
