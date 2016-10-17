@@ -1,54 +1,78 @@
+from __future__ import print_function
+import argparse
+import logging
+import numpy as np
+from time import time
+import sys
+import utils as U
+import pickle as pk
+import cv2 as cv
+
+import reader
+
+logger = logging.getLogger(__name__)
+
+###############################################################################################################################
+## Parse arguments
+#
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-path", "--image-path", dest="image_path", type=str, metavar='<str>', default=None, help="The path to the folder containing the images")
+parser.add_argument("-ref", "--ref-image-name", dest="ref_image_name", type=str, metavar='<str>', default=None, help="Name to the ref image (i.e., Original image without reflection)")
+parser.add_argument("-o", "--out-dir", dest="out_dir_path", type=str, metavar='<str>', required=True, help="The path to the output directory")
+parser.add_argument("-show", "--show-image", dest="is_show_image_popup", action='store_true', help="Set this flag to make the averaged image shown in a popup window")
+
+
+args = parser.parse_args()
+
+image_path = args.image_path
+ref_image_name = args.ref_image_name
+out_dir = args.out_dir_path
+is_show_image_popup = args.is_show_image_popup
+
+U.mkdir_p(out_dir)
+U.set_logger(out_dir)
+U.print_args(args)
+
 # Assumption:
 # - All picture samples have the same dimenstion
 # - All picture samples are static (camera and objects in focus are stationary)
 
-import numpy as np
-import cv2 as cv
-
-def reflectionRemoval(*pics):
+def doAveraging(image_filenames):
+    logger.info("Starting to process images, and perform averaging...")
     # Exit if there are not pictures
-    if len(pics) == 0:
-        print "No pictures assigned as sample"
+    if len(image_filenames) == 0:
+        logger.error("Error, no images are included! in function doReflectionRemoval()")
         return
     
     # Initialise output as first picture
-    output = np.float32(cv.imread(pics[0], cv.IMREAD_COLOR))
+    output = np.float32(cv.imread(image_filenames[0], cv.IMREAD_COLOR))
 
     # Average each picture
-    for index in xrange(1, len(pics)):
-        image = np.float32(cv.imread(pics[index], cv.IMREAD_COLOR))
+    for index in xrange(1, len(image_filenames)):
+        image = np.float32(cv.imread(image_filenames[index], cv.IMREAD_COLOR))
         output = (index / (index + 1.0)) * output + (1.0 / (index + 1.0)) * image
     
     # Convert image to uint8
-    output = cv.convertScaleAbs(output)
+    averagedImage = cv.convertScaleAbs(output)
+    
+    # save image
+    averagedImagePath = out_dir + '/averaged_image.jpg'
+    cv.imwrite(averagedImagePath, averagedImage)
 
     # Show the image
-    cv.imshow("averaged", output)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    if is_show_image_popup:
+        cv.imshow("averaged", output)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+        
+    logger.info("Averaging completed!")
+    logger.info("Image saved in %s", averagedImagePath)
 
-def main():
-    files_lores = [
-        "2m.png", "3m.png", "4m.png",
-        "5m.png", "6m.png", "7m.png",
-        "8m.png", "9m.png", "10m.png",
-        "11m.png", "12m.png", "13m.png",
-        "14m.png", "15m.png", "16m.png",
-        "17m.png", "18m.png", "19m.png",
-        "20m.png"
-    ]
-    
-    files_hires = [
-        "2.png", "3.png", "4.png",
-        "5.png", "6.png", "7.png",
-        "8.png", "9.png", "10.png",
-        "11.png", "12.png", "13.png",
-        "14.png", "15.png", "16.png",
-        "17.png", "18.png", "19.png",
-        "20.png"
-    ]
 
-    reflectionRemoval(*files_hires)
+####################################################################
+# Main functions here
+####################################################################
 
-if __name__ == "__main__":
-    main()
+image_filenames = reader.getImagePaths(image_path, ref_image_name)
+doAveraging(image_filenames)
