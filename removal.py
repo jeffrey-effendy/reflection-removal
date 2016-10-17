@@ -1,11 +1,7 @@
-from __future__ import print_function
 import argparse
 import logging
 import numpy as np
-from time import time
-import sys
 import utils as U
-import pickle as pk
 import cv2 as cv
 
 import reader
@@ -21,7 +17,6 @@ parser.add_argument("-path", "--image-path", dest="image_path", type=str, metava
 parser.add_argument("-ref", "--ref-image-name", dest="ref_image_name", type=str, metavar='<str>', default=None, help="Name to the ref image (i.e., Original image without reflection)")
 parser.add_argument("-o", "--out-dir", dest="out_dir_path", type=str, metavar='<str>', required=True, help="The path to the output directory")
 parser.add_argument("-show", "--show-image", dest="is_show_image_popup", action='store_true', help="Set this flag to make the averaged image shown in a popup window")
-
 
 args = parser.parse_args()
 
