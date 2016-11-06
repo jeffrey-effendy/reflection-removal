@@ -1,4 +1,4 @@
-function [M] = flatimages(url, files)
+function [M, r, c] = flatimages(url, files)
     files_size = numel(files);
     if (files_size == 0)
         error('There is no files specified');
@@ -14,6 +14,8 @@ function [M] = flatimages(url, files)
             M = zeros(files_size, size(img,1) * size(img,2) * size(img,3));
         end
         M(i,:) = reshape(img, 1, numel(img));
+        r = size(img,1);
+        c = size(img,2);
     end    
 end
 
