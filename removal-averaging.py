@@ -1,3 +1,4 @@
+from sklearn.metrics import mean_squared_error as mse
 import argparse
 import logging
 import numpy as np
@@ -34,7 +35,9 @@ U.print_args(args)
 # - All picture samples are static (camera and objects in focus are stationary)
 
 
-def doAveraging(image_filenames):
+def doAveraging(image_filenames, ref_file):
+    st = U.Stopwatch()
+    st.start()
     logger.info("Starting to process images, and perform averaging...")
     
     # Exit if there are not pictures
@@ -53,6 +56,10 @@ def doAveraging(image_filenames):
     # Convert image to uint8
     averagedImage = cv.convertScaleAbs(output)
     
+    logger.info("Finished in " + str(st.stop()))
+    ref = cv.imread(ref_file, cv.IMREAD_COLOR)
+    logger.info("With mse " + str(mse(ref.flatten(), averagedImage.flatten())))
+
     # save image
     averagedImagePath = out_dir + '/averaged_image.jpg'
     cv.imwrite(averagedImagePath, averagedImage)
@@ -72,5 +79,5 @@ def doAveraging(image_filenames):
 ####################################################################
 
 if (__name__ == "__main__"):
-    image_filenames = reader.getImagePaths(image_path, ref_image_name)
-    doAveraging(image_filenames)
+    image_filenames, ref_file = reader.getImagePaths(image_path, ref_image_name)
+    doAveraging(image_filenames, ref_file)
