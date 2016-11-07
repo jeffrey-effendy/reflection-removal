@@ -112,8 +112,11 @@ def doRpca(image_filenames, ref_file):
     L = np.reshape(L,(L.shape[0],int(L.shape[1]/3),3))
     S = np.reshape(S,(S.shape[0],int(S.shape[1]/3),3))
 
+    ref = cv.imread(ref_file, cv.IMREAD_COLOR)
+
     for i in range (len(M)):
         base = os.path.basename(image_filenames[i])
+        ext = os.path.splitext(base)[1]
         current_filename = os.path.splitext(base)[0]
         
         testM = np.reshape(M[i],(dimension[0],dimension[1],3))
@@ -130,6 +133,9 @@ def doRpca(image_filenames, ref_file):
         testS = np.uint8(testS)
         imgS = Image.fromarray(testS)
         imgS.save(out_dir+"/"+current_filename+"-sparse.png")
+
+        # logger.info(current_filename + ext + " Original MSE : " + str(mse(ref.flatten(), M[i].flatten())))
+        logger.info(current_filename + ext + " Low-rank MSE : " + str(mse(ref.flatten(), L[i].flatten())))
         
     logger.info("RPCA completed!")
 
