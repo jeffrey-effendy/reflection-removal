@@ -2,6 +2,7 @@ from sklearn.metrics import mean_squared_error as mse
 import argparse
 import logging
 import os
+import time
 import numpy as np
 import utils as U
 import cv2 as cv
@@ -98,6 +99,7 @@ def process_image(filenames):
     return np.array(matrix), shape[::-1]
 
 def doRpca(image_filenames, ref_file):
+    start = time.time()
     M, dimension = process_image(image_filenames)
     
     # shape[0] is the number of images in the dataset
@@ -138,6 +140,8 @@ def doRpca(image_filenames, ref_file):
         logger.info(current_filename + ext + " Low-rank MSE : " + str(mse(ref.flatten(), L[i].flatten())))
         
     logger.info("RPCA completed!")
+    rpca_time = time.time() - start
+    logger.info("RPCA total time taken = %.3f seconds" % rpca_time)
 
 ####################################################################
 # Main functions here
