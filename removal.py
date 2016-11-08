@@ -5,7 +5,6 @@ import os
 import time
 import numpy as np
 import utils as U
-import cv2 as cv
 from PIL import Image
 from pcp import pcp
 
@@ -49,6 +48,7 @@ U.print_args(args)
 
 
 def doAveraging(image_filenames, ref_file):
+    import cv2 as cv
     st = U.Stopwatch()
     st.start()
     logger.info("Starting to process images, and perform averaging...")
@@ -114,7 +114,8 @@ def doRpca(image_filenames, ref_file):
     L = np.reshape(L,(L.shape[0],int(L.shape[1]/3),3))
     S = np.reshape(S,(S.shape[0],int(S.shape[1]/3),3))
 
-    ref = cv.imread(ref_file, cv.IMREAD_COLOR)
+    ref = Image.open(ref_file).convert("RGB")
+    ref = np.array(ref.getdata())
 
     for i in range (len(M)):
         base = os.path.basename(image_filenames[i])
