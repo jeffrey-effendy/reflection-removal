@@ -116,6 +116,8 @@ def doRpca(image_filenames, ref_file):
 
     ref = Image.open(ref_file).convert("RGB")
     ref = np.array(ref.getdata())
+    
+    sum_mse = 0.0
 
     for i in range (len(M)):
         base = os.path.basename(image_filenames[i])
@@ -138,7 +140,12 @@ def doRpca(image_filenames, ref_file):
         imgS.save(out_dir+"/"+current_filename+"-sparse.png")
 
         # logger.info(current_filename + ext + " Original MSE : " + str(mse(ref.flatten(), M[i].flatten())))
-        logger.info(current_filename + ext + " Low-rank MSE : " + str(mse(ref.flatten(), L[i].flatten())))
+        current_mse = mse(ref.flatten(), L[i].flatten())
+        logger.info(current_filename + ext + " Low-rank MSE : " + str(current_mse))
+        sum_mse = sum_mse + current_mse
+        
+    logger.info("Sum MSE of all low-rank images = " + str(sum_mse))
+    logger.info("Average MSE of all low-rank images = " + str(sum_mse/len(M)))
         
     logger.info("RPCA completed!")
     rpca_time = time.time() - start
