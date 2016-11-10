@@ -36,7 +36,7 @@ def pcp(M, delta=1e-6, mu=None, maxiter=500, verbose=False, missing_data=True,
             logger.info("mu = {0}".format(mu))
 
     # Convergence criterion.
-    norm = np.sum(M ** 2)
+    norm = np.linalg.norm(M) ** 2
 
     # Iterate.
     i = 0
