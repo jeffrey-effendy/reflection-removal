@@ -1,4 +1,4 @@
-__all__ = ["pcp"]
+__all__ = ["alm"]
 
 import time
 import fbpca
