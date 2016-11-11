@@ -1,4 +1,17 @@
-# Running the RPCA
+# Reflection Removal
+
+**Python**
+
+Assuming your machine is a LINUX/UNIX machine with python installed,
+- To run averaging, simply run `runAveragingTest.sh` or `runAveragingAll.sh`
+- To run RPCA, simply run `runRpcaTest.sh`  
+
+The main python file is `removal.py`, with all the arguments and definition in the file.
+Look at the shell scripts mentioned above to see the available arguments and settings.
+
+**MATLAB**
+
+Only for RPCA.
 
 Script below is a MATLAB script:
 - [path, files, ref] = filewalk('data/01-lowres', '.png')
