@@ -7,6 +7,7 @@ import numpy as np
 import utils as U
 from PIL import Image
 from pcp import pcp
+from alm import alm
 
 import reader
 
@@ -109,7 +110,11 @@ def doRpca(image_filenames, ref_file):
     
     logger.info(M.shape)
     logger.info(dimension)
+
     L, S, (u, s, v) = pcp(M, maxiter=num_iter, verbose=True, svd_method=rpca_method)
+    # Uncomment this section and comment the line above if you want to run ALM instead of PCP ADM
+    # L, S, (u, s, v) = alm(M, maxiter=num_iter, verbose=True, svd_method=rpca_method)
+
     M = np.reshape(M,(M.shape[0],int(M.shape[1]/3),3))
     L = np.reshape(L,(L.shape[0],int(L.shape[1]/3),3))
     S = np.reshape(S,(S.shape[0],int(S.shape[1]/3),3))
